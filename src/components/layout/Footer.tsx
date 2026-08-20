@@ -18,7 +18,7 @@ export default function Footer() {
 
         <div className={styles.footerRight}>
           <span className={styles.footerLink}>
-            Built by Neel
+            Built by Indraneel Chatterjee
           </span>
 
           <span className={styles.footerDivider} aria-hidden="true" />
