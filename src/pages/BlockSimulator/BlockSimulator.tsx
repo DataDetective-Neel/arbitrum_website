@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   Shield,
   Clock,
+  RotateCcw,
 } from 'lucide-react';
 import {
   computeBlockHash,
@@ -18,28 +19,39 @@ import styles from './BlockSimulator.module.css';
 
 const GENESIS_HASH = '0'.repeat(64);
 
-function createInitialBlock(id: number, previousHash: string): Block {
-  return {
-    id,
-    data: id === 1 ? 'Hello, Arbitrum!' : 'Second block data',
-    previousHash,
+const INITIAL_BLOCK_1_DATA = 'Hello, Arbitrum!';
+const INITIAL_BLOCK_2_DATA = 'Second block data';
+
+export default function BlockSimulator() {
+  const [block1, setBlock1] = useState<Block>({
+    id: 1,
+    data: INITIAL_BLOCK_1_DATA,
+    previousHash: GENESIS_HASH,
     nonce: 0,
     hash: '',
     isMined: false,
     isMining: false,
     isValid: false,
-  };
-}
+  });
 
-export default function BlockSimulator() {
-  const [block1, setBlock1] = useState<Block>(() => createInitialBlock(1, GENESIS_HASH));
-  const [block2, setBlock2] = useState<Block>(() => createInitialBlock(2, ''));
+  const [block2, setBlock2] = useState<Block>({
+    id: 2,
+    data: INITIAL_BLOCK_2_DATA,
+    previousHash: '',
+    nonce: 0,
+    hash: '',
+    isMined: false,
+    isMining: false,
+    isValid: false,
+  });
+
   const [miningLogs, setMiningLogs] = useState<Record<number, MiningLog[]>>({ 1: [], 2: [] });
+  const [hasBeenMinedBefore, setHasBeenMinedBefore] = useState(false);
 
   const abortRef1 = useRef<AbortController | null>(null);
   const abortRef2 = useRef<AbortController | null>(null);
 
-  // Compute block1 hash whenever its inputs change (and it's not mining)
+  // Compute Block 1 Hash whenever data, previousHash, or nonce changes (and not actively mining)
   useEffect(() => {
     if (block1.isMining) return;
 
@@ -51,24 +63,28 @@ export default function BlockSimulator() {
           ...prev,
           hash,
           isValid: valid,
-          isMined: prev.isMined && valid,
         }));
       }
     });
-    return () => { cancelled = true; };
+
+    return () => {
+      cancelled = true;
+    };
   }, [block1.data, block1.previousHash, block1.nonce, block1.isMining]);
 
-  // Update block2's previousHash when block1's hash changes
+  // Propagate Block 1 Hash to Block 2's previousHash
   useEffect(() => {
     if (block1.hash && !block2.isMining) {
-      setBlock2(prev => ({
-        ...prev,
-        previousHash: block1.hash,
-      }));
+      setBlock2(prev => {
+        if (prev.previousHash !== block1.hash) {
+          return { ...prev, previousHash: block1.hash };
+        }
+        return prev;
+      });
     }
   }, [block1.hash, block2.isMining]);
 
-  // Compute block2 hash whenever its inputs change (and it's not mining)
+  // Compute Block 2 Hash whenever its data, previousHash, or nonce changes (and not actively mining)
   useEffect(() => {
     if (block2.isMining || !block2.previousHash) return;
 
@@ -80,27 +96,34 @@ export default function BlockSimulator() {
           ...prev,
           hash,
           isValid: valid,
-          isMined: prev.isMined && valid,
         }));
       }
     });
-    return () => { cancelled = true; };
+
+    return () => {
+      cancelled = true;
+    };
   }, [block2.data, block2.previousHash, block2.nonce, block2.isMining]);
 
   // Mine a block
   const handleMine = useCallback(async (blockId: number) => {
-    const setBlock = blockId === 1 ? setBlock1 : setBlock2;
-    const abortRef = blockId === 1 ? abortRef1 : abortRef2;
+    const isBlock1 = blockId === 1;
+    const abortRef = isBlock1 ? abortRef1 : abortRef2;
 
-    // Cancel any existing mining
+    // Abort existing mining on this block if any
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
 
-    setBlock(prev => ({ ...prev, isMining: true, isMined: false }));
+    if (isBlock1) {
+      setBlock1(prev => ({ ...prev, isMining: true }));
+    } else {
+      setBlock2(prev => ({ ...prev, isMining: true }));
+    }
+
     setMiningLogs(prev => ({ ...prev, [blockId]: [] }));
 
-    const currentBlock = blockId === 1 ? block1 : block2;
+    const currentBlock = isBlock1 ? block1 : block2;
 
     try {
       const result = await mineBlock(
@@ -108,92 +131,144 @@ export default function BlockSimulator() {
         currentBlock.previousHash,
         0,
         (nonce, hash) => {
-          // Throttled progress callback — batch log entries
           setMiningLogs(prev => {
-            const logs = prev[blockId];
+            const logs = prev[blockId] || [];
             const newEntry = { nonce, hash };
-            // Keep only last 20 entries to avoid memory bloat
             const updated = [...logs.slice(-19), newEntry];
             return { ...prev, [blockId]: updated };
           });
-          setBlock(prev => ({ ...prev, nonce, hash }));
+          if (isBlock1) {
+            setBlock1(prev => ({ ...prev, nonce, hash }));
+          } else {
+            setBlock2(prev => ({ ...prev, nonce, hash }));
+          }
         },
         controller.signal
       );
 
-      setBlock(prev => ({
-        ...prev,
-        nonce: result.nonce,
-        hash: result.hash,
-        isMined: true,
-        isMining: false,
-        isValid: true,
-      }));
-    } catch (err) {
-      if (err instanceof DOMException && err.name === 'AbortError') {
-        // Mining was cancelled, that's fine
+      if (isBlock1) {
+        setBlock1(prev => ({
+          ...prev,
+          nonce: result.nonce,
+          hash: result.hash,
+          isMined: true,
+          isMining: false,
+          isValid: true,
+        }));
+      } else {
+        setBlock2(prev => ({
+          ...prev,
+          nonce: result.nonce,
+          hash: result.hash,
+          isMined: true,
+          isMining: false,
+          isValid: true,
+        }));
+        setHasBeenMinedBefore(true);
       }
-      setBlock(prev => ({ ...prev, isMining: false }));
+    } catch (err) {
+      if (!(err instanceof DOMException && err.name === 'AbortError')) {
+        console.error('Mining error:', err);
+      }
+      if (isBlock1) {
+        setBlock1(prev => ({ ...prev, isMining: false }));
+      } else {
+        setBlock2(prev => ({ ...prev, isMining: false }));
+      }
     }
   }, [block1, block2]);
 
-  // Handle data change on block 1
+  // Handle data changes
   const handleBlock1DataChange = (newData: string) => {
     abortRef1.current?.abort();
     setBlock1(prev => ({
       ...prev,
       data: newData,
-      isMined: false,
       isMining: false,
     }));
     setMiningLogs(prev => ({ ...prev, 1: [] }));
   };
 
-  // Handle data change on block 2
   const handleBlock2DataChange = (newData: string) => {
     abortRef2.current?.abort();
     setBlock2(prev => ({
       ...prev,
       data: newData,
-      isMined: false,
       isMining: false,
     }));
     setMiningLogs(prev => ({ ...prev, 2: [] }));
   };
 
-  // Tamper with block 1
+  // Tamper action
   const handleTamper = () => {
-    handleBlock1DataChange('TAMPERED DATA');
+    handleBlock1DataChange('TAMPERED: 100 ETH to Attacker');
   };
 
-  // Determine chain status
-  const getChainStatus = () => {
-    if (!block1.isMined && !block2.isMined) return 'pending';
-    if (block1.isValid && block2.isValid && block1.isMined && block2.isMined) return 'valid';
-    return 'invalid';
+  // Reset to initial clean state
+  const handleReset = () => {
+    abortRef1.current?.abort();
+    abortRef2.current?.abort();
+    setBlock1({
+      id: 1,
+      data: INITIAL_BLOCK_1_DATA,
+      previousHash: GENESIS_HASH,
+      nonce: 0,
+      hash: '',
+      isMined: false,
+      isMining: false,
+      isValid: false,
+    });
+    setBlock2({
+      id: 2,
+      data: INITIAL_BLOCK_2_DATA,
+      previousHash: '',
+      nonce: 0,
+      hash: '',
+      isMined: false,
+      isMining: false,
+      isValid: false,
+    });
+    setMiningLogs({ 1: [], 2: [] });
+    setHasBeenMinedBefore(false);
   };
 
-  const chainStatus = getChainStatus();
+  // Compute overall chain status
+  const isChainValid = block1.isValid && block2.isValid && block1.isMined && block2.isMined;
+  const isCompromised = hasBeenMinedBefore && (!block1.isValid || !block2.isValid);
+  const chainStatus: 'valid' | 'invalid' | 'pending' = isChainValid
+    ? 'valid'
+    : isCompromised
+    ? 'invalid'
+    : 'pending';
 
   const getStatusLabel = () => {
     switch (chainStatus) {
-      case 'valid': return 'CHAIN INTEGRITY: VERIFIED';
-      case 'invalid': return 'CHAIN INTEGRITY: COMPROMISED';
-      case 'pending': return 'CHAIN INTEGRITY: PENDING';
+      case 'valid':
+        return 'CHAIN INTEGRITY: VERIFIED';
+      case 'invalid':
+        return 'CHAIN INTEGRITY: COMPROMISED';
+      case 'pending':
+        return 'CHAIN INTEGRITY: PENDING';
     }
   };
 
   const getStatusText = () => {
     switch (chainStatus) {
-      case 'valid': return 'Both blocks are mined and their hashes form a valid chain.';
-      case 'invalid': return 'Changing earlier data changed its hash, breaking the reference stored by the next block.';
-      case 'pending': return 'Mine both blocks to establish a valid chain.';
+      case 'valid':
+        return 'Both blocks are validly mined and their hashes form an unbroken cryptographic link.';
+      case 'invalid':
+        return 'Modifying earlier block data altered its hash, breaking the cryptographic reference stored in subsequent blocks.';
+      case 'pending':
+        return 'Mine Block 01 and Block 02 to establish an immutable cryptographic chain.';
     }
   };
 
-  const StatusIcon = chainStatus === 'valid' ? Shield
-    : chainStatus === 'invalid' ? AlertTriangle
-    : Clock;
+  const StatusIcon =
+    chainStatus === 'valid'
+      ? Shield
+      : chainStatus === 'invalid'
+      ? AlertTriangle
+      : Clock;
 
   return (
     <main className="page-content">
@@ -202,11 +277,12 @@ export default function BlockSimulator() {
           <p className={styles.headerLabel}>LAYER//LAB — CASE 04</p>
           <h1 className={styles.headerTitle}>Block Simulator</h1>
           <p className={styles.headerDescription}>
-            Mine blocks with real SHA-256 hashing, observe chain dependencies,
-            and see firsthand why tampering with blockchain data is detectable.
+            Mine blocks using real SHA-256 hashing via the Web Crypto API, inspect
+            chain dependencies, and witness how altering historical records instantly
+            breaks chain integrity.
           </p>
           <span className={styles.simLabel}>
-            Educational Simulation · Not a Production Blockchain
+            Educational Simulation · Real SHA-256 Hashing · No External Libraries
           </span>
         </header>
 
@@ -228,7 +304,7 @@ export default function BlockSimulator() {
             </div>
           </div>
 
-          {block1.isMined && (
+          <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
             <button
               onClick={handleTamper}
               className={styles.tamperBtn}
@@ -238,7 +314,17 @@ export default function BlockSimulator() {
               <AlertTriangle size={14} aria-hidden="true" />
               Tamper with Block 01
             </button>
-          )}
+
+            <button
+              onClick={handleReset}
+              className={styles.resetBtn}
+              disabled={block1.isMining || block2.isMining}
+              aria-label="Reset simulation to initial state"
+            >
+              <RotateCcw size={14} aria-hidden="true" />
+              Reset Chain
+            </button>
+          </div>
         </div>
 
         {/* Blocks Grid */}
@@ -254,21 +340,33 @@ export default function BlockSimulator() {
 
           {/* Chain Connector */}
           <div className={styles.chainConnector} aria-hidden="true">
-            <div className={`${styles.connectorLine} ${
-              block1.isMined && block2.isMined
-                ? (block2.isValid ? styles.valid : styles.invalid)
-                : ''
-            }`} />
-            <div className={`${styles.connectorDot} ${
-              block1.isMined && block2.isMined
-                ? (block2.isValid ? styles.valid : styles.invalid)
-                : styles.pending
-            }`} />
-            <div className={`${styles.connectorLine} ${
-              block1.isMined && block2.isMined
-                ? (block2.isValid ? styles.valid : styles.invalid)
-                : ''
-            }`} />
+            <div
+              className={`${styles.connectorLine} ${
+                chainStatus === 'valid'
+                  ? styles.valid
+                  : chainStatus === 'invalid'
+                  ? styles.invalid
+                  : ''
+              }`}
+            />
+            <div
+              className={`${styles.connectorDot} ${
+                chainStatus === 'valid'
+                  ? styles.valid
+                  : chainStatus === 'invalid'
+                  ? styles.invalid
+                  : styles.pending
+              }`}
+            />
+            <div
+              className={`${styles.connectorLine} ${
+                chainStatus === 'valid'
+                  ? styles.valid
+                  : chainStatus === 'invalid'
+                  ? styles.invalid
+                  : ''
+              }`}
+            />
           </div>
 
           {/* Block 2 */}
@@ -277,57 +375,50 @@ export default function BlockSimulator() {
             logs={miningLogs[2]}
             onDataChange={handleBlock2DataChange}
             onMine={() => handleMine(2)}
-            disableMine={block1.isMining || block2.isMining || !block1.isMined}
+            disableMine={block1.isMining || block2.isMining || !block1.isValid}
           />
         </div>
 
         {/* What Just Happened */}
         <div className={styles.explanation}>
-          <h2 className={styles.explanationTitle}>What just happened?</h2>
+          <h2 className={styles.explanationTitle}>How Blockchain Immutability Works</h2>
           <div className={styles.explanationSteps}>
             <div className={styles.explanationStep}>
               <span className={styles.stepNum}>1</span>
               <span>
-                <strong>Mine Block 01</strong> — The simulator increments a nonce
-                value and computes a SHA-256 hash each time, until the hash starts
-                with "{DIFFICULTY_PREFIX}". This is a simplified version of
-                proof-of-work.
+                <strong>Mine Block 01</strong> — The simulator increments the nonce from 0
+                and calculates a real SHA-256 hash at every step until finding a hash starting with "
+                {DIFFICULTY_PREFIX}". This simulates Proof of Work consensus.
               </span>
             </div>
             <div className={styles.explanationStep}>
               <span className={styles.stepNum}>2</span>
               <span>
-                <strong>Mine Block 02</strong> — Block 02 stores Block 01's hash
-                as its "Previous Hash." This creates a chain — each block
-                references the one before it.
+                <strong>Mine Block 02</strong> — Block 02 stores Block 01's valid hash as its
+                immutable "Previous Hash". The cryptographic fingerprint of Block 01 is now sealed inside Block 02.
               </span>
             </div>
             <div className={styles.explanationStep}>
               <span className={styles.stepNum}>3</span>
               <span>
-                <strong>Tamper with Block 01</strong> — Changing Block 01's data
-                changes its hash. Block 02 still stores the <em>old</em> hash,
-                so the reference breaks. The chain becomes invalid.
+                <strong>Tamper with Block 01</strong> — Altering any character of Block 01's data
+                produces a completely different SHA-256 hash. The hash stored in Block 02 no longer matches Block 01's content, instantly invalidating Block 02 and alerting the entire network.
               </span>
             </div>
             <div className={styles.explanationStep}>
               <span className={styles.stepNum}>4</span>
               <span>
-                <strong>Restore the chain</strong> — Re-mine Block 01 to get a
-                new valid hash, then re-mine Block 02 so its Previous Hash
-                matches. This demonstrates why altering historical data in a
-                real blockchain requires re-mining every subsequent block.
+                <strong>Restoring Chain Integrity</strong> — To forge historical data, an attacker would have to re-mine Block 01 and then sequentially re-mine every subsequent block in the chain before the rest of the network progresses.
               </span>
             </div>
           </div>
         </div>
 
         <p className={styles.disclaimer}>
-          This simulator uses the Web Crypto API for real SHA-256 hashing. It
-          demonstrates the core concept of hash-linked blocks and tamper
-          detection. A real blockchain additionally involves distributed
-          consensus, network propagation, and significantly higher difficulty
-          targets.
+          Technical Note: This educational simulation uses the standard W3C Web Crypto API
+          (crypto.subtle.digest) for client-side SHA-256 computation. A production blockchain network
+          builds upon these exact cryptographic primitives while incorporating peer-to-peer gossip
+          propagation, dynamic difficulty adjustment, and decentralized consensus algorithms.
         </p>
       </div>
     </main>
@@ -351,7 +442,7 @@ function BlockCard({
 }) {
   const logRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll mining log
+  // Auto-scroll mining log to bottom
   useEffect(() => {
     if (logRef.current) {
       logRef.current.scrollTop = logRef.current.scrollHeight;
@@ -363,11 +454,11 @@ function BlockCard({
       return (
         <span className={`${styles.validityBadge} ${styles.miningBadge}`}>
           <Hammer size={10} aria-hidden="true" />
-          MINING
+          MINING...
         </span>
       );
     }
-    if (block.isMined && block.isValid) {
+    if (block.isValid) {
       return (
         <span className={`${styles.validityBadge} ${styles.validBadge}`}>
           <CheckCircle2 size={10} aria-hidden="true" />
@@ -390,8 +481,12 @@ function BlockCard({
     );
   };
 
-  const cardClass = block.isMined
-    ? block.isValid ? styles.valid : styles.invalid
+  const cardClass = block.isMining
+    ? ''
+    : block.isValid
+    ? styles.valid
+    : block.isMined || (!block.isValid && block.nonce > 0)
+    ? styles.invalid
     : '';
 
   return (
@@ -406,8 +501,11 @@ function BlockCard({
       <div className={styles.blockCardBody}>
         {/* Data */}
         <div className={styles.field}>
-          <label className={styles.fieldLabel}>Block Data</label>
+          <label className={styles.fieldLabel} htmlFor={`block-data-${block.id}`}>
+            Block Data (Payload)
+          </label>
           <input
+            id={`block-data-${block.id}`}
             type="text"
             className={styles.fieldInput}
             value={block.data}
@@ -419,14 +517,10 @@ function BlockCard({
 
         {/* Previous Hash */}
         <div className={styles.field}>
-          <label className={styles.fieldLabel}>Previous Hash</label>
+          <span className={styles.fieldLabel}>Previous Hash</span>
           <div className={styles.fieldValue}>
             {block.previousHash ? (
-              <span className={
-                block.id === 2 && block.isMined && !block.isValid
-                  ? styles.hashMismatch
-                  : styles.fieldValueHighlight
-              }>
+              <span className={styles.fieldValueHighlight}>
                 {block.previousHash}
               </span>
             ) : (
@@ -437,20 +531,20 @@ function BlockCard({
 
         {/* Nonce */}
         <div className={styles.field}>
-          <label className={styles.fieldLabel}>Nonce</label>
-          <div className={styles.fieldValue}>
-            {block.nonce}
-          </div>
+          <span className={styles.fieldLabel}>Nonce (Proof of Work Counter)</span>
+          <div className={styles.fieldValue}>{block.nonce}</div>
         </div>
 
         {/* Hash */}
         <div className={styles.field}>
-          <label className={styles.fieldLabel}>Hash</label>
+          <span className={styles.fieldLabel}>Current SHA-256 Hash</span>
           <div className={styles.fieldValue}>
             {block.hash ? (
-              <span className={
-                block.isValid ? styles.fieldValueHighlight : styles.hashMismatch
-              }>
+              <span
+                className={
+                  block.isValid ? styles.fieldValueHighlight : styles.hashMismatch
+                }
+              >
                 {block.hash}
               </span>
             ) : (
@@ -461,20 +555,21 @@ function BlockCard({
 
         {/* Mining Log */}
         {(block.isMining || logs.length > 0) && (
-          <div className={styles.miningLog} ref={logRef} aria-label="Mining log">
+          <div
+            className={styles.miningLog}
+            ref={logRef}
+            aria-label={`Block ${block.id} mining log`}
+            tabIndex={0}
+          >
             {logs.map((log, i) => (
               <div
                 key={i}
                 className={`${styles.logEntry} ${
-                  i === logs.length - 1 && block.isMined ? styles.logSuccess : ''
+                  i === logs.length - 1 && block.isValid ? styles.logSuccess : ''
                 }`}
               >
-                <span className={styles.logNonce}>
-                  Nonce: {log.nonce}
-                </span>
-                <span className={styles.logHash}>
-                  {log.hash}
-                </span>
+                <span className={styles.logNonce}>Nonce {log.nonce}:</span>
+                <span className={styles.logHash}>{log.hash}</span>
               </div>
             ))}
           </div>
@@ -488,7 +583,11 @@ function BlockCard({
           aria-label={`Mine block ${block.id}`}
         >
           <Hammer size={14} aria-hidden="true" />
-          {block.isMining ? 'Mining...' : block.isMined ? 'Re-Mine Block' : 'Mine Block'}
+          {block.isMining
+            ? 'Mining in Progress...'
+            : block.isValid
+            ? 'Re-Mine Block'
+            : 'Mine Block'}
         </button>
       </div>
     </div>
