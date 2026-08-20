@@ -54,7 +54,7 @@ The application is structured into four cohesive investigation modules:
 | **React 19 + TypeScript** | Component architecture, state management, and type safety |
 | **Vite 8** | Build tooling, hot module replacement, and asset bundling |
 | **React Router v7** | Client-side SPA routing with active link highlighting and route-change scroll reset |
-| **Web Crypto API** | Hardware-accelerated native SHA-256 hashing without external dependencies |
+| **Web Crypto API** | Native Web Crypto API SHA-256 hashing without an external blockchain library |
 | **CSS Modules & Variables** | Scoped, zero-runtime design token system with responsive grid layouts |
 | **Lucide React** | Feather-light accessible iconography |
 | **CoinGecko API** | Public market data endpoints for live cryptocurrency metrics |

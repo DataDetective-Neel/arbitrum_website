@@ -86,7 +86,7 @@ function ConceptCard({
 
           {/* Practical Example */}
           <div className={styles.practicalExample}>
-            <p className={styles.practicalLabel}>Practical Example</p>
+            <p className={styles.practicalLabel}>Real-World Scenario</p>
             <p className={styles.practicalText}>
               {concept.practicalExample}
             </p>
@@ -94,7 +94,7 @@ function ConceptCard({
 
           {/* Key Takeaway */}
           <div className={styles.takeaway}>
-            <p className={styles.takeawayLabel}>Key Takeaway</p>
+            <p className={styles.takeawayLabel}>Core Architectural Insight</p>
             <p className={styles.takeawayText}>{concept.keyTakeaway}</p>
           </div>
         </div>
@@ -104,7 +104,9 @@ function ConceptCard({
 }
 
 export default function Concepts() {
-  const [openCards, setOpenCards] = useState<Set<string>>(new Set());
+  const [openCards, setOpenCards] = useState<Set<string>>(
+    () => new Set(['web2-vs-web3', 'public-vs-private-key'])
+  );
 
   const toggleCard = (id: string) => {
     setOpenCards(prev => {
@@ -118,18 +120,44 @@ export default function Concepts() {
     });
   };
 
+  const expandAll = () => {
+    setOpenCards(new Set(CONCEPTS.map(c => c.id)));
+  };
+
+  const collapseAll = () => {
+    setOpenCards(new Set());
+  };
+
   return (
     <main className="page-content">
       <div className="container">
         <header className={styles.header}>
           <p className={styles.headerLabel}>LAYER//LAB — CASE 02</p>
-          <h1 className={styles.headerTitle}>
-            Fundamental Concepts
-          </h1>
-          <p className={styles.headerDescription}>
-            Four comparisons that define the key building blocks of Web3
-            infrastructure. Click each card to explore the differences.
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
+            <div>
+              <h1 className={styles.headerTitle}>Fundamental Web3 Concepts</h1>
+              <p className={styles.headerDescription}>
+                Four comparative engineering investigations clarifying the trust assumptions,
+                cryptographic foundations, and execution models of decentralized systems.
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <button
+                onClick={expandAll}
+                className={styles.actionBtn}
+                aria-label="Expand all concept cards"
+              >
+                Expand All
+              </button>
+              <button
+                onClick={collapseAll}
+                className={styles.actionBtn}
+                aria-label="Collapse all concept cards"
+              >
+                Collapse All
+              </button>
+            </div>
+          </div>
         </header>
 
         <div className={styles.conceptsGrid}>

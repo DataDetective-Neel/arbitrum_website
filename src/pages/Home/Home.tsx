@@ -12,6 +12,7 @@ import {
   ChevronDown,
   MinusCircle,
   CheckCircle2,
+  Cpu,
 } from 'lucide-react';
 import styles from './Home.module.css';
 
@@ -21,37 +22,41 @@ interface LayerData {
   name: string;
   subtitle: string;
   detail: string;
+  metrics: string;
 }
 
 const LAYERS: LayerData[] = [
   {
     id: 'user',
-    tag: 'APPLICATION LAYER',
-    name: 'You (the User)',
-    subtitle: 'Wallets, dApps, and applications you interact with every day.',
+    tag: 'LAYER 3 / APPLICATION LAYER',
+    name: 'User & dApp Interface',
+    subtitle: 'Wallets, decentralized applications, and smart contract interfaces.',
     detail:
-      'When you send a transaction, swap tokens, or interact with a decentralized application, your request starts here. The application passes your signed transaction down to the execution layer.',
+      'Transactions originate here when you sign a payload using your private key (via MetaMask, Rabby, or smart contract wallet). Rather than broadcasting directly to Ethereum Mainnet, the signed intent is routed to the Layer 2 sequencer.',
+    metrics: 'Initiation · ECDSA Signatures · Client-side routing',
   },
   {
     id: 'arbitrum',
-    tag: 'LAYER 2 — EXECUTION',
-    name: 'Arbitrum (Rollup)',
-    subtitle: 'Processes transactions quickly and affordably off Ethereum mainnet.',
+    tag: 'LAYER 2 — ROLLUP EXECUTION',
+    name: 'Arbitrum One / Nitro Engine',
+    subtitle: 'High-throughput off-chain execution with compressed batch posting.',
     detail:
-      'Arbitrum bundles many transactions together and executes them on its own chain. It then posts compressed transaction data back to Ethereum as a single batch, dramatically reducing the per-transaction cost while inheriting Ethereum\'s security guarantees.',
+      'Arbitrum executes transactions immediately inside its Nitro engine, providing instant user feedback. Transactions are ordered, bundled into batches, compressed via Brotli, and posted down to Ethereum as calldata. Fraud-proof mechanisms allow any validator to challenge invalid state transitions.',
+    metrics: 'Off-chain Execution · Calldata Compression · Interactive Fraud Proofs',
   },
   {
     id: 'ethereum',
-    tag: 'LAYER 1 — SETTLEMENT',
-    name: 'Ethereum (Mainnet)',
-    subtitle: 'The security and finality backbone for the entire ecosystem.',
+    tag: 'LAYER 1 — BASE SETTLEMENT & CONSENSUS',
+    name: 'Ethereum Mainnet',
+    subtitle: 'The decentralized settlement, data availability, and security anchor.',
     detail:
-      'Ethereum validates the compressed proofs posted by Arbitrum. It acts as the ultimate source of truth — if there is ever a dispute about a transaction, Ethereum settles it. This is what gives Layer 2 solutions their security.',
+      'Ethereum stores the compressed transaction batches posted by Arbitrum. If an invalid assertion is disputed during the dispute window, Ethereum smart contracts execute an interactive one-step fraud proof to verify and slash malicious actors, guaranteeing Layer 1 grade security.',
+    metrics: 'Proof of Stake · Final Settlement · Dispute Arbitration',
   },
 ];
 
 export default function Home() {
-  const [activeLayer, setActiveLayer] = useState<string | null>(null);
+  const [activeLayer, setActiveLayer] = useState<string | null>('arbitrum');
 
   const toggleLayer = (id: string) => {
     setActiveLayer(prev => (prev === id ? null : id));
@@ -68,18 +73,18 @@ export default function Home() {
             <span className={styles.heroHeadlineEm}>everything</span> itself.
           </h1>
           <p className={styles.heroDescription}>
-            As demand for Ethereum grew, so did congestion and costs. Layer 2
-            solutions like Arbitrum extend Ethereum's capacity — processing
-            transactions faster and more affordably while preserving the
-            security of the underlying network.
+            Base-layer blockchains prioritize decentralization and security over
+            raw computational throughput. Layer 2 optimistic rollups like Arbitrum
+            move transaction execution off-chain while anchoring final settlement and
+            security directly to Ethereum.
           </p>
           <div className={styles.heroCtas}>
             <a href="#layers" className={styles.ctaPrimary}>
-              Explore the Layers
+              Explore Layer Architecture
               <ArrowDown size={14} aria-hidden="true" />
             </a>
             <Link to="/simulator" className={styles.ctaSecondary}>
-              Run the Simulator
+              Launch Block Simulator
               <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </div>
@@ -89,50 +94,71 @@ export default function Home() {
       {/* ---- Interactive Layer Diagram ---- */}
       <section className={styles.section} id="layers">
         <div className="container">
-          <p className={styles.sectionLabel}>Infrastructure</p>
-          <h2 className={styles.sectionTitle}>How the layers connect</h2>
+          <p className={styles.sectionLabel}>System Architecture</p>
+          <h2 className={styles.sectionTitle}>The Modular Scaling Stack</h2>
           <p className={styles.sectionDescription}>
-            Click each layer to understand its role in the stack. Transactions
-            flow downward — from you to execution to settlement.
+            Explore how data flows through the three architectural tiers. Click any layer
+            to inspect its cryptographic and execution responsibilities.
           </p>
 
-          <div className={styles.layerDiagram} role="list" aria-label="Layer 2 architecture diagram">
-            {LAYERS.map((layer, idx) => (
-              <div key={layer.id}>
-                <button
-                  className={`${styles.layerCard} ${
-                    activeLayer === layer.id ? styles.activeLayer : ''
-                  }`}
-                  onClick={() => toggleLayer(layer.id)}
-                  aria-expanded={activeLayer === layer.id}
-                  role="listitem"
-                >
-                  <div className={styles.layerCardHeader}>
-                    <span className={styles.layerTag}>{layer.tag}</span>
-                    <span className={styles.layerArrow}>
-                      <ChevronDown size={14} aria-hidden="true" />
-                    </span>
-                  </div>
-                  <h3 className={styles.layerName}>{layer.name}</h3>
-                  <p className={styles.layerSub}>{layer.subtitle}</p>
-                  <div
-                    className={`${styles.layerDetail} ${
-                      activeLayer === layer.id ? styles.expanded : ''
+          <div
+            className={styles.layerDiagram}
+            role="list"
+            aria-label="Interactive Layer 2 architecture diagram"
+          >
+            {LAYERS.map((layer, idx) => {
+              const isSelected = activeLayer === layer.id;
+              return (
+                <div key={layer.id} className={styles.layerWrapper}>
+                  <button
+                    className={`${styles.layerCard} ${
+                      isSelected ? styles.activeLayer : ''
                     }`}
+                    onClick={() => toggleLayer(layer.id)}
+                    aria-expanded={isSelected}
+                    role="listitem"
                   >
-                    <p className={styles.layerDetailText}>{layer.detail}</p>
-                  </div>
-                </button>
-                {idx < LAYERS.length - 1 && (
-                  <div className={styles.layerConnector} aria-hidden="true">
-                    <div className={styles.layerConnectorDot} />
-                  </div>
-                )}
-              </div>
-            ))}
+                    <div className={styles.layerCardHeader}>
+                      <div className={styles.layerHeaderLeft}>
+                        <span className={styles.layerTag}>{layer.tag}</span>
+                        {layer.id === 'arbitrum' && (
+                          <span className={styles.featuredBadge}>Scaling Layer</span>
+                        )}
+                      </div>
+                      <span className={styles.layerArrow} aria-hidden="true">
+                        <ChevronDown size={16} />
+                      </span>
+                    </div>
+
+                    <h3 className={styles.layerName}>{layer.name}</h3>
+                    <p className={styles.layerSub}>{layer.subtitle}</p>
+
+                    <div
+                      className={`${styles.layerDetail} ${
+                        isSelected ? styles.expanded : ''
+                      }`}
+                    >
+                      <p className={styles.layerDetailText}>{layer.detail}</p>
+                      <div className={styles.layerMetrics}>
+                        <Cpu size={12} aria-hidden="true" />
+                        <span>{layer.metrics}</span>
+                      </div>
+                    </div>
+                  </button>
+
+                  {idx < LAYERS.length - 1 && (
+                    <div className={styles.layerConnector} aria-hidden="true">
+                      <div className={styles.layerConnectorLine} />
+                      <div className={styles.layerConnectorDot} />
+                      <div className={styles.layerConnectorLine} />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
           <p className={styles.diagramCaption}>
-            ↑ Click a layer to explore its role
+            Select a tier above to inspect execution mechanics and security guarantees
           </p>
         </div>
       </section>
@@ -140,14 +166,14 @@ export default function Home() {
       {/* ---- The Problem ---- */}
       <section className={styles.section}>
         <div className="container">
-          <p className={styles.sectionLabel}>The Problem</p>
+          <p className={styles.sectionLabel}>The Scalability Trilemma</p>
           <h2 className={styles.sectionTitle}>
-            Ethereum's growing pains
+            Why Ethereum Layer 1 Needs Off-Chain Execution
           </h2>
           <p className={styles.sectionDescription}>
-            Ethereum's popularity became its bottleneck. The network can only
-            process a limited number of transactions per block, which creates
-            cascading issues during periods of high demand.
+            Every full node on Ethereum must execute every single smart contract operation
+            and store global state. When transaction demand exceeds block capacity, the system
+            encounters severe bottlenecks:
           </p>
 
           <div className={styles.problemGrid}>
@@ -157,8 +183,9 @@ export default function Home() {
               </div>
               <h3 className={styles.problemTitle}>Network Congestion</h3>
               <p className={styles.problemText}>
-                When many users compete for limited block space, transactions
-                queue up and confirmation times increase significantly.
+                Ethereum processes approximately 15–30 transactions per second on base layer.
+                When thousands of users submit transactions concurrently, pending mempools
+                fill up and wait times surge.
               </p>
             </div>
 
@@ -166,11 +193,11 @@ export default function Home() {
               <div className={styles.problemIcon}>
                 <TrendingUp size={18} aria-hidden="true" />
               </div>
-              <h3 className={styles.problemTitle}>Rising Transaction Costs</h3>
+              <h3 className={styles.problemTitle}>Volatile Gas Markets</h3>
               <p className={styles.problemText}>
-                Users bid against each other for block inclusion. During peak
-                demand, gas fees can make simple operations prohibitively
-                expensive for everyday use.
+                Base layer fee markets use priority gas auctions (EIP-1559). During market
+                volatility or popular mints, transaction fees can spike to dozens of dollars
+                for basic transfers.
               </p>
             </div>
 
@@ -178,11 +205,11 @@ export default function Home() {
               <div className={styles.problemIcon}>
                 <Box size={18} aria-hidden="true" />
               </div>
-              <h3 className={styles.problemTitle}>Scaling Limitations</h3>
+              <h3 className={styles.problemTitle}>Global State Bloat</h3>
               <p className={styles.problemText}>
-                Ethereum's base layer prioritizes decentralization and security
-                over raw throughput, creating a natural ceiling on how many
-                transactions it can handle.
+                Requiring tens of thousands of global nodes to process identical execution
+                payloads caps computational throughput to ensure consumer hardware can run
+                validating nodes.
               </p>
             </div>
           </div>
@@ -192,34 +219,36 @@ export default function Home() {
       {/* ---- The Solution ---- */}
       <section className={styles.section}>
         <div className="container">
-          <p className={styles.sectionLabel}>The Solution</p>
+          <p className={styles.sectionLabel}>Optimistic Rollup Technology</p>
           <h2 className={styles.sectionTitle}>
-            Arbitrum: scaling Ethereum without compromise
+            How Arbitrum Scales Throughput Without Sacrificing Trust
           </h2>
 
           <div className={styles.solutionContent}>
             <div className={styles.solutionText}>
               <p className={styles.solutionParagraph}>
-                Arbitrum is a{' '}
+                Arbitrum is an{' '}
                 <span className={styles.solutionHighlight}>
-                  Layer 2 optimistic rollup
+                  Optimistic Rollup
                 </span>{' '}
-                built on Ethereum. Instead of processing every transaction
-                directly on Ethereum, Arbitrum handles execution on its own
-                chain and periodically posts compressed transaction data back
-                to Ethereum.
+                that assumes off-chain state transitions are valid by default
+                (&ldquo;optimistic&rdquo;). Instead of performing complex computations
+                directly on Ethereum, Arbitrum processes transactions in its Nitro
+                execution environment and posts highly compressed transaction data back to
+                Layer 1.
               </p>
               <p className={styles.solutionParagraph}>
-                This approach preserves Ethereum's security guarantees while
-                significantly increasing the number of transactions the
-                ecosystem can handle. Users interact with the same
-                applications and assets — but with lower fees and faster
-                confirmation times.
+                By bundling hundreds of operations into a single calldata batch on
+                Ethereum, users share the fixed Layer 1 settlement cost while enjoying
+                sub-second confirmation times and full EVM compatibility.
               </p>
               <p className={styles.solutionParagraph}>
-                If any transaction result is disputed, Arbitrum's fraud-proof
-                system allows anyone to challenge it on Ethereum, ensuring
-                that invalid state transitions can always be corrected.
+                Security is maintained through an{' '}
+                <span className={styles.solutionHighlight}>
+                  interactive fraud-proof protocol
+                </span>. If a malicious assertion is submitted, honest validators can challenge
+                it on Ethereum through a bisection game, narrowing the dispute down to a single
+                instruction executed on-chain.
               </p>
             </div>
 
@@ -229,10 +258,10 @@ export default function Home() {
                   <Layers size={16} aria-hidden="true" />
                 </div>
                 <div>
-                  <p className={styles.featureLabel}>Batch Processing</p>
+                  <p className={styles.featureLabel}>Calldata Compression</p>
                   <p className={styles.featureText}>
-                    Hundreds of transactions are compressed into a single
-                    Ethereum transaction, sharing the base layer cost.
+                    Hundreds of user transactions are compressed and bundled into a single
+                    Ethereum transaction, amortizing settlement costs across the batch.
                   </p>
                 </div>
               </div>
@@ -242,10 +271,10 @@ export default function Home() {
                   <Zap size={16} aria-hidden="true" />
                 </div>
                 <div>
-                  <p className={styles.featureLabel}>Faster Execution</p>
+                  <p className={styles.featureLabel}>Sub-Second User Feedback</p>
                   <p className={styles.featureText}>
-                    Transactions are processed on Arbitrum's chain with
-                    faster block times and near-instant confirmations.
+                    Transactions receive soft confirmations nearly instantaneously on L2,
+                    dramatically improving user experience for trading, gaming, and payments.
                   </p>
                 </div>
               </div>
@@ -255,10 +284,10 @@ export default function Home() {
                   <Shield size={16} aria-hidden="true" />
                 </div>
                 <div>
-                  <p className={styles.featureLabel}>Ethereum Security</p>
+                  <p className={styles.featureLabel}>Ethereum-Anchored Security</p>
                   <p className={styles.featureText}>
-                    All transaction data is posted to Ethereum. Dispute
-                    resolution is handled by Ethereum's consensus.
+                    Layer 1 consensus provides immutable data availability and dispute
+                    resolution. Arbitrum does not rely on a separate external validator set.
                   </p>
                 </div>
               </div>
@@ -270,13 +299,13 @@ export default function Home() {
       {/* ---- Real-World Benefit ---- */}
       <section className={styles.section}>
         <div className="container">
-          <p className={styles.sectionLabel}>Real-World Comparison</p>
+          <p className={styles.sectionLabel}>Comparative Analysis</p>
           <h2 className={styles.sectionTitle}>
-            What changes for the user?
+            Ethereum Mainnet vs. Arbitrum One
           </h2>
           <p className={styles.sectionDescription}>
-            The same applications and assets — but with a meaningfully
-            different cost and speed profile.
+            A side-by-side engineering comparison illustrating why modern Web3 applications
+            deploy to Layer 2 for execution.
           </p>
 
           <div className={styles.comparisonGrid}>
@@ -285,9 +314,9 @@ export default function Home() {
               <p
                 className={`${styles.comparisonSideLabel} ${styles.comparisonSideLabelEth}`}
               >
-                ETHEREUM MAINNET
+                ETHEREUM MAINNET (LAYER 1)
               </p>
-              <h3 className={styles.comparisonSideTitle}>Layer 1</h3>
+              <h3 className={styles.comparisonSideTitle}>Base Settlement</h3>
               <div className={styles.comparisonPoints}>
                 <div className={styles.comparisonPoint}>
                   <MinusCircle
@@ -297,7 +326,7 @@ export default function Home() {
                     aria-hidden="true"
                   />
                   <span>
-                    Transaction fees vary widely and can spike during high demand
+                    <strong>Variable Gas Costs:</strong> Each transaction pays full L1 execution and storage fees individually.
                   </span>
                 </div>
                 <div className={styles.comparisonPoint}>
@@ -308,7 +337,7 @@ export default function Home() {
                     aria-hidden="true"
                   />
                   <span>
-                    Block confirmations take approximately 12–15 seconds
+                    <strong>12-Second Slots:</strong> Blocks are produced on fixed 12-second intervals with 2-epoch finality.
                   </span>
                 </div>
                 <div className={styles.comparisonPoint}>
@@ -319,7 +348,7 @@ export default function Home() {
                     aria-hidden="true"
                   />
                   <span>
-                    Limited throughput shared across all applications
+                    <strong>Constrained Throughput:</strong> Global block gas limits cap network capacity to ~15–30 TPS.
                   </span>
                 </div>
               </div>
@@ -337,9 +366,9 @@ export default function Home() {
               <p
                 className={`${styles.comparisonSideLabel} ${styles.comparisonSideLabelArb}`}
               >
-                ARBITRUM
+                ARBITRUM ONE (LAYER 2)
               </p>
-              <h3 className={styles.comparisonSideTitle}>Layer 2</h3>
+              <h3 className={styles.comparisonSideTitle}>Rollup Execution</h3>
               <div className={styles.comparisonPoints}>
                 <div className={styles.comparisonPoint}>
                   <CheckCircle2
@@ -349,7 +378,7 @@ export default function Home() {
                     aria-hidden="true"
                   />
                   <span>
-                    Significantly lower fees by batching transactions together
+                    <strong>Batch Cost Sharing:</strong> Execution happens on L2; compressed batch calldata amortizes L1 overhead.
                   </span>
                 </div>
                 <div className={styles.comparisonPoint}>
@@ -360,7 +389,7 @@ export default function Home() {
                     aria-hidden="true"
                   />
                   <span>
-                    Near-instant transaction confirmation on the L2 chain
+                    <strong>Sub-Second Confirmations:</strong> Near-instant sequencer responses provide smooth interactive UX.
                   </span>
                 </div>
                 <div className={styles.comparisonPoint}>
@@ -371,7 +400,7 @@ export default function Home() {
                     aria-hidden="true"
                   />
                   <span>
-                    Higher throughput while inheriting Ethereum's security
+                    <strong>Inherited L1 Security:</strong> Backed by Ethereum consensus and interactive fraud-proof arbitration.
                   </span>
                 </div>
               </div>
@@ -384,15 +413,15 @@ export default function Home() {
       <section className={styles.takeaway}>
         <div className="container">
           <div className={styles.takeawayContent}>
-            <p className={styles.sectionLabel}>Why It Matters</p>
+            <p className={styles.sectionLabel}>Educational Takeaway</p>
             <p className={styles.takeawayText}>
-              Layer 2 solutions don't replace Ethereum — they extend it.
+              Layer 2 rollups scale Ethereum by separating execution from settlement.
             </p>
             <p className={styles.takeawaySubtext}>
-              By moving execution to a separate layer while using Ethereum for
-              settlement and security, the ecosystem can serve more users
-              without sacrificing the decentralization and trustlessness that
-              make blockchain technology valuable in the first place.
+              Instead of forcing a single layer to balance high throughput, decentralization,
+              and security simultaneously, the modular blockchain paradigm allows Ethereum to
+              serve as a secure settlement anchor while Layer 2 networks like Arbitrum deliver
+              fast, cost-effective computational throughput for millions of users.
             </p>
           </div>
         </div>
