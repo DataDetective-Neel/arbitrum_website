@@ -1,0 +1,1094 @@
+# Master Prompt — Arbitrum Builder Labs Project
+
+You are my lead product designer, senior frontend engineer, Web3 educator, QA engineer, and GitHub release manager.
+
+We are building my **Arbitrum Builder Labs assignment** as a polished, original, evaluator-focused project.
+
+Your goal is NOT to make a basic four-page student website.
+
+Your goal is to build a website that makes the evaluator immediately think:
+
+> "This person understood the assignment, understood the Web3 concepts, and knows how to turn them into a real interactive product."
+
+The final project must be technically correct, visually distinctive, responsive, fast, well-organized, and easy for me to explain during evaluation.
+
+---
+
+# 1. ASSIGNMENT REQUIREMENTS — NON-NEGOTIABLE
+
+The final website must contain exactly these four primary pages:
+
+1. Home / Landing
+2. Concepts
+3. Live Prices
+4. Block Simulator
+
+All four pages must be part of ONE cohesive website.
+
+Every page must have a shared navigation system.
+
+The visitor must be able to navigate to every page from every page without manually editing the URL.
+
+The active page must be visually highlighted.
+
+The website must be responsive on desktop, tablet, and mobile.
+
+The assignment allows HTML/CSS/JavaScript or React/Next.js. Use React + TypeScript + Vite unless there is a strong technical reason not to.
+
+Use clean component architecture.
+
+---
+
+# 2. PRODUCT CONCEPT
+
+Do NOT make this look like a generic crypto dashboard.
+
+Do NOT make four unrelated pages.
+
+Create a cohesive concept around:
+
+# "LAYER//LAB"
+
+Subtitle:
+
+"An interactive investigation into how modern Web3 infrastructure works."
+
+The visual idea is a **Web3 research laboratory / technical intelligence interface**.
+
+The user should feel like they are exploring a system rather than reading a textbook.
+
+The experience should progress naturally:
+
+HOME
+→ Understand the Layer 2 problem
+
+CONCEPTS
+→ Understand the fundamental Web3 building blocks
+
+LIVE PRICES
+→ Observe real cryptocurrency data
+
+BLOCK SIMULATOR
+→ Experiment with blockchain mechanics
+
+This should feel like one educational product.
+
+Do NOT use the "DataDetective" branding unless I explicitly ask for it later.
+
+---
+
+# 3. VISUAL DIRECTION
+
+The website must look significantly different from a typical AI-generated student project.
+
+Avoid:
+
+* Generic SaaS landing pages
+* Huge gradients everywhere
+* Excessive glassmorphism
+* Random 3D crypto coins
+* Stock illustrations
+* Generic "Welcome to Web3" hero sections
+* Excessive animations
+* Neon overload
+* Copy-pasted crypto dashboard templates
+* Giant text with no useful information
+* Fake statistics
+* Fake blockchain data
+* Fake testimonials
+* Fake partner logos
+
+Instead create a sophisticated technical visual language.
+
+Think:
+
+* Premium developer tool
+* Web3 research lab
+* Technical documentation meets interactive dashboard
+* Editorial typography
+* Structured grids
+* Subtle data visualization
+* Layer diagrams
+* Hash strings
+* Network connections
+* Terminal-inspired micro-elements
+* Precise spacing
+* Strong information hierarchy
+
+Use a restrained color system.
+
+Suggested direction:
+
+* Deep charcoal / near-black foundation
+* Off-white typography
+* Arbitrum-inspired blue/purple accents used carefully
+* One warm accent for emphasis
+* Subtle borders and grid lines
+
+Do NOT simply copy Arbitrum's official website.
+
+The design should be inspired by the technical nature of Layer 2 infrastructure while remaining original.
+
+Use subtle motion:
+
+* Page transitions
+* Hover states
+* Card expansion
+* Number/value transitions
+* Hash generation feedback
+* Loading states
+* Connection lines
+* Status changes
+
+Animations must support understanding rather than exist just for decoration.
+
+Respect prefers-reduced-motion.
+
+---
+
+# 4. BRANDING
+
+Use:
+
+LAYER//LAB
+
+as the project name.
+
+Possible tagline:
+
+"See the layers. Understand the chain."
+
+Keep the branding subtle and professional.
+
+Do not make it look like an official Arbitrum product.
+
+Clearly position it as an educational project.
+
+Footer should contain:
+
+* My name: Neel
+* GitHub link: [INSERT GITHUB URL]
+* Builder Labs / batch information if appropriate
+* Project name
+
+Do not invent personal information.
+
+If something is unknown, use a clearly marked placeholder and tell me.
+
+---
+
+# 5. PAGE 1 — HOME / ARBITRUM + LAYER 2
+
+This page must satisfy the assignment's Arbitrum / Layer 2 theme.
+
+It must explain:
+
+1. Why Ethereum needed Layer 2 solutions
+2. What Arbitrum is and how it helps
+3. One real-world benefit of using Arbitrum over Ethereum mainnet
+
+Do this through an interactive narrative rather than three boring paragraphs.
+
+Suggested structure:
+
+## HERO
+
+Small label:
+
+LAYER//LAB — CASE 01
+
+Headline:
+
+"Ethereum doesn't need to do everything itself."
+
+Supporting text should clearly introduce the Layer 2 problem.
+
+Primary CTA:
+
+"Explore the Layers"
+
+Secondary CTA:
+
+"Run the Simulator"
+
+## INTERACTIVE LAYER DIAGRAM
+
+Visually show:
+
+USER
+↓
+ARBITRUM / LAYER 2
+↓
+ETHEREUM
+
+Explain the high-level relationship clearly.
+
+Allow subtle interaction when hovering/clicking each layer.
+
+## THE PROBLEM
+
+Create three concise visual indicators:
+
+* Network congestion
+* Higher transaction costs during demand
+* Scaling limitations
+
+Do not invent specific numerical claims.
+
+## THE SOLUTION
+
+Explain Arbitrum in simple, accurate language.
+
+Make it understandable to someone who has never used a Layer 2.
+
+## REAL-WORLD BENEFIT
+
+Show one concrete conceptual comparison:
+
+Ethereum mainnet
+vs
+Arbitrum
+
+Focus on transaction cost / scalability / user experience.
+
+Do not make unsupported claims such as guaranteed fees or exact speed multiples.
+
+## WHY IT MATTERS
+
+End with a concise takeaway.
+
+The page should teach something even if the visitor knows nothing about Web3.
+
+---
+
+# 6. PAGE 2 — CONCEPTS
+
+This page must cover exactly these four comparisons:
+
+1. Web2 vs Web3
+2. Ethereum vs Bitcoin
+3. Public Key vs Private Key
+4. Blockchain vs Traditional Database
+
+The assignment explicitly wants visual comparison cards/tables rather than plain paragraphs.
+
+Therefore create four highly polished interactive comparison modules.
+
+Do NOT simply make two columns of text.
+
+Each module should contain:
+
+* Concept title
+* Short explanation
+* Key differences
+* Visual indicators
+* Practical example
+* "Key takeaway"
+
+Potential interaction:
+
+Hover or click a comparison card to reveal additional detail.
+
+Example:
+
+PUBLIC KEY
+→ Can be shared
+→ Identifies an account/address
+→ Used for receiving/verification contexts
+
+PRIVATE KEY
+→ Must remain secret
+→ Used to authorize/sign transactions
+→ Loss/compromise has serious consequences
+
+Make the explanations accurate and simple.
+
+Do not turn the page into a textbook.
+
+The goal is understanding.
+
+---
+
+# 7. PAGE 3 — LIVE PRICES
+
+This page MUST use the CoinGecko public API.
+
+Minimum requirement:
+
+BTC
+ETH
+
+Fetch:
+
+* Current USD price
+* 24-hour percentage change
+
+Display:
+
+* Coin name
+* Symbol
+* Current price
+* 24h percentage
+* Green/up indicator when positive
+* Red/down indicator when negative
+
+Add a working Refresh button that actually performs another API request.
+
+Suggested endpoint:
+
+https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin&vs_currencies=usd&include_24hr_change=true
+
+Handle:
+
+* Loading state
+* API error
+* Empty response
+* Retry
+* Refreshing state
+
+Do not crash if CoinGecko is unavailable.
+
+Add ARB as an optional third asset if the API supports it cleanly, because it fits the project's theme.
+
+Do not hardcode fake current prices.
+
+Do not pretend stale data is live.
+
+Clearly show the last successful update time.
+
+Example interface:
+
+LIVE MARKET INTELLIGENCE
+
+BTC
+$XX,XXX
+▲ +X.XX%
+24H
+
+ETH
+$X,XXX
+▼ -X.XX%
+24H
+
+ARB
+$X.XX
+▲ +X.XX%
+24H
+
+[ REFRESH MARKET DATA ]
+
+LAST UPDATED
+21:43:17
+
+The interface should feel like a professional intelligence terminal rather than a generic crypto price page.
+
+---
+
+# 8. PAGE 4 — BLOCK SIMULATOR
+
+This is the most technically important page.
+
+Implement it using JavaScript/TypeScript and the Web Crypto API where practical.
+
+Do NOT use a blockchain library.
+
+The page must demonstrate:
+
+* Block data
+* Previous hash
+* Nonce
+* Hashing
+* Simulated proof-of-work
+* Block validity
+* Chain dependency
+* Immutability
+
+## BLOCK 1
+
+Inputs:
+
+Block Data
+Previous Hash
+Nonce
+
+Show:
+
+Current Hash
+Mining status
+Validity
+
+## MINING
+
+Create a "Mine Block" button.
+
+When clicked:
+
+* Start from the current nonce
+* Increment nonce
+* Generate a SHA-256 hash
+* Continue until the hash begins with "00"
+* Display the successful nonce
+* Display the resulting hash
+* Show that the block is valid
+
+Make the mining process visually understandable.
+
+Show something like:
+
+MINING...
+
+Nonce: 184
+Hash: 8f92...
+
+Nonce: 185
+Hash: 4a10...
+
+Nonce: 186
+Hash: 00b71...
+
+BLOCK MINED
+
+Do not fake the final result.
+
+Actually calculate it.
+
+## BLOCK 2
+
+Block 2 must use Block 1's hash as its Previous Hash.
+
+Visually connect:
+
+BLOCK 01
+↓
+BLOCK 02
+
+Block 2 must become invalid if Block 1's data changes.
+
+## TAMPERING DEMONSTRATION
+
+Provide a clear interaction:
+
+"TAMPER WITH BLOCK 01"
+
+When Block 1's data changes:
+
+1. Block 1 hash changes
+2. Block 2 previous hash no longer matches
+3. Block 2 becomes INVALID
+
+Make the transition visually obvious.
+
+Display:
+
+CHAIN INTEGRITY
+COMPROMISED
+
+Then explain briefly:
+
+"Changing earlier data changes its hash, breaking the reference stored by the next block."
+
+This is the key educational insight.
+
+---
+
+# 9. MAKE PAGE 4 THE SHOWCASE
+
+The simulator should be the page the evaluator remembers.
+
+Add a small "What just happened?" explanation below the simulator.
+
+Possible flow:
+
+1. Change Block 1
+2. Observe hash change
+3. Observe Block 2 become invalid
+4. Mine Block 1 again
+5. Observe validity being restored
+
+If technically feasible, allow the user to mine both blocks and restore the chain.
+
+The interaction should make blockchain immutability intuitive without claiming that this toy simulator is a complete real blockchain.
+
+Clearly label it as a simulation.
+
+---
+
+# 10. MICRO-INTERACTIONS
+
+Use meaningful micro-interactions throughout the site.
+
+Examples:
+
+* Nav active indicator
+* Hovering a layer highlights its relationship
+* Comparison cards expand
+* API refresh has a loading state
+* Prices animate when updated
+* Hash characters appear/update during mining
+* Block validity changes immediately
+* Invalid chain shows a clear visual warning
+* Buttons have tactile hover/pressed states
+
+Do not overanimate.
+
+Performance comes first.
+
+---
+
+# 11. RESPONSIVENESS
+
+The website must work properly on:
+
+* Desktop
+* Laptop
+* Tablet
+* Mobile
+
+Test at approximately:
+
+320px
+375px
+768px
+1024px
+1440px
+
+No:
+
+* Horizontal scrolling
+* Overlapping cards
+* Broken navigation
+* Tiny unreadable text
+* Simulator controls extending outside viewport
+
+Mobile navigation must be properly designed.
+
+---
+
+# 12. ACCESSIBILITY
+
+Use:
+
+* Semantic HTML
+* Keyboard navigation
+* Visible focus states
+* Accessible button labels
+* Proper contrast
+* ARIA only when necessary
+* Reduced-motion support
+* Meaningful loading/error states
+
+Do not sacrifice accessibility for visual effects.
+
+---
+
+# 13. CODE QUALITY
+
+Use a clean structure.
+
+For example:
+
+src/
+components/
+pages/
+layouts/
+hooks/
+services/
+utils/
+data/
+styles/
+
+Use reusable components.
+
+Do not duplicate the same navbar/footer/card code unnecessarily.
+
+Separate API logic from UI.
+
+Separate blockchain hashing/mining logic from UI.
+
+Use TypeScript types/interfaces where useful.
+
+Keep components reasonably sized.
+
+Do not create enormous single-file components.
+
+Do not leave unused dependencies.
+
+Do not leave console errors.
+
+Do not leave TODOs for required functionality.
+
+---
+
+# 14. README
+
+Create a professional README.
+
+It must contain:
+
+# LAYER//LAB
+
+Short project description.
+
+## Pages
+
+Explain all four pages.
+
+## Tech Stack
+
+List the technologies actually used.
+
+## Features
+
+List important interactive features.
+
+## Running Locally
+
+Give exact installation and run commands.
+
+## Architecture
+
+Briefly explain the project structure.
+
+## API
+
+Explain CoinGecko usage.
+
+## Blockchain Simulation
+
+Explain how hashing, nonce mining and chain validation work.
+
+## Known Limitations
+
+Be honest.
+
+For example, the block simulator is an educational simulation and not a production blockchain.
+
+## Future Improvements
+
+Mention realistic improvements.
+
+Do not write fake claims such as "production-ready blockchain infrastructure."
+
+---
+
+# 15. DIFFERENTIATION STRATEGY
+
+The evaluator will probably see many submissions containing:
+
+* Navbar
+* Hero
+* Four cards
+* BTC/ETH prices
+* Simple block simulator
+
+Therefore differentiation must come from:
+
+1. Strong visual identity
+2. Excellent information hierarchy
+3. Interactive storytelling
+4. Technically correct simulator
+5. Cohesive design
+6. Thoughtful micro-interactions
+7. High-quality responsive behavior
+8. Clear educational explanations
+9. Professional code structure
+
+Do NOT differentiate through unnecessary complexity.
+
+Do not add:
+
+* Wallet connection just for show
+* Fake transactions
+* Fake AI chatbot
+* Fake blockchain explorer
+* Fake on-chain data
+* Unnecessary authentication
+* Unnecessary backend
+* Random NFTs
+* Random tokenomics
+
+Every feature must have a reason.
+
+---
+
+# 16. STAGED DEVELOPMENT + GITHUB
+
+THIS IS CRITICAL.
+
+Do NOT build the entire project in one giant step.
+
+Work in stages.
+
+After each meaningful stage:
+
+1. Run the application
+2. Test the functionality you just implemented
+3. Fix obvious issues
+4. Check the browser console
+5. Check responsive behavior where relevant
+6. Commit the completed stage
+7. Push it to the GitHub repository
+
+Use meaningful commit messages.
+
+DO NOT create meaningless commits such as:
+
+"update"
+"changes"
+"final"
+"stuff"
+
+Use commits like:
+
+feat: initialize Layer Lab architecture
+
+feat: build shared navigation system
+
+feat: create Arbitrum landing experience
+
+feat: add interactive Web3 concept cards
+
+feat: integrate CoinGecko market data
+
+feat: implement SHA-256 block mining
+
+feat: implement chain validation and tamper detection
+
+feat: add responsive mobile navigation
+
+fix: handle CoinGecko API failures
+
+fix: correct block validation state
+
+docs: add project README
+
+chore: final cleanup and production checks
+
+Push every completed stage to the configured GitHub repository.
+
+If the repository is not configured, STOP and tell me exactly what you need instead of pretending the push succeeded.
+
+Never claim a commit or push happened unless it actually happened.
+
+---
+
+# 17. DEVELOPMENT STAGES
+
+Follow this order.
+
+## STAGE 0 — REPOSITORY AUDIT
+
+Before writing code:
+
+* Inspect the repository
+* Inspect existing files
+* Check git status
+* Determine existing framework
+* Determine existing remote
+* Do not destroy existing work without explaining why
+
+Then report:
+
+* Current state
+* Proposed architecture
+* What you intend to change
+
+Do not start blindly.
+
+---
+
+## STAGE 1 — FOUNDATION
+
+Implement:
+
+* React + TypeScript + Vite setup if appropriate
+* Routing
+* Global styling
+* Typography
+* Color system
+* Shared navbar
+* Shared footer
+* Responsive base layout
+* Project structure
+
+Test it.
+
+Commit and push.
+
+---
+
+## STAGE 2 — HOME
+
+Build the complete Arbitrum / Layer 2 landing page.
+
+Focus heavily on:
+
+* Visual storytelling
+* Layer diagram
+* Clear explanations
+* Responsive design
+* Original visual identity
+
+Test.
+
+Commit and push.
+
+---
+
+## STAGE 3 — CONCEPTS
+
+Build all four interactive comparison modules.
+
+Test:
+
+* Desktop
+* Mobile
+* Keyboard interaction
+
+Commit and push.
+
+---
+
+## STAGE 4 — LIVE MARKET
+
+Implement CoinGecko API integration.
+
+Test:
+
+* Successful request
+* Refresh
+* Loading
+* Error state
+* Negative percentage
+* Positive percentage
+* Mobile layout
+
+Commit and push.
+
+---
+
+## STAGE 5 — BLOCK SIMULATOR
+
+Implement:
+
+* SHA-256
+* Nonce
+* Mining
+* Hash display
+* Block validity
+* Block 2 dependency
+* Tamper detection
+* Chain restoration if practical
+
+Test thoroughly.
+
+This stage must receive extra attention.
+
+Commit and push.
+
+---
+
+## STAGE 6 — POLISH
+
+Perform a complete UI/UX pass.
+
+Look for:
+
+* Alignment
+* Typography
+* Spacing
+* Inconsistent components
+* Poor animations
+* Weak empty states
+* Mobile problems
+* Accessibility problems
+* Visual clutter
+
+Make the website feel like one product.
+
+Commit and push.
+
+---
+
+## STAGE 7 — QA
+
+Act as a hostile evaluator.
+
+Try to break the project.
+
+Test:
+
+* Every navigation link
+* Every button
+* API failure
+* Refresh
+* Block mining
+* Tampering
+* Invalid chain
+* Mobile layout
+* Desktop layout
+* Browser console
+* Page refresh
+* Direct route access
+
+Fix everything you find.
+
+Then commit and push.
+
+---
+
+## STAGE 8 — FINAL SUBMISSION PREPARATION
+
+Create/finalize:
+
+* README.md
+* Screenshot-ready page states
+* Clean repository
+* No unnecessary files
+* No secrets
+* No API keys committed
+* No console errors
+
+Run a final build.
+
+Only after the final build succeeds should you tell me the project is ready.
+
+Commit and push.
+
+---
+
+# 18. GITHUB DISCIPLINE
+
+Before every push:
+
+Run:
+
+git status
+
+Then inspect the diff.
+
+Never accidentally commit:
+
+* .env files
+* API keys
+* node_modules
+* build artifacts
+* personal secrets
+* temporary screenshots
+* debugging files
+
+Maintain a proper .gitignore.
+
+After pushing, verify that the commit exists on the remote.
+
+---
+
+# 19. EVALUATOR MODE
+
+At the end of every stage, briefly tell me:
+
+STAGE:
+STATUS:
+WHAT WAS BUILT:
+WHAT WAS TESTED:
+COMMIT:
+PUSH:
+NEXT STAGE:
+
+Do not give me huge explanations after every small change.
+
+However, if something is technically uncertain or fails, explain it clearly and do not hide it.
+
+---
+
+# 20. IMPORTANT BEHAVIOR RULES
+
+Do not ask me unnecessary questions.
+
+Make sensible engineering decisions yourself.
+
+If there are multiple reasonable options, choose the one that produces the best evaluator experience while keeping the code understandable.
+
+Do not over-engineer.
+
+Do not use fake functionality.
+
+Do not hardcode live API results.
+
+Do not claim blockchain concepts that are technically inaccurate.
+
+Do not copy another website's design.
+
+Do not copy Arbitrum's official website.
+
+Do not fabricate project statistics.
+
+Do not fabricate my GitHub URL, batch, university information, or other personal information.
+
+Use placeholders when information is genuinely missing.
+
+Most importantly:
+
+**Build something I can defend in an interview or evaluation.**
+
+If an evaluator asks:
+
+"Why did you build it this way?"
+
+I should have a sensible answer.
+
+If they ask:
+
+"How does your simulator work?"
+
+I should be able to explain it.
+
+If they ask:
+
+"Where does the price data come from?"
+
+The answer should be obvious from the implementation.
+
+If they ask:
+
+"What happens when Block 1 changes?"
+
+The application should visibly demonstrate the answer.
+
+---
+
+# FINAL QUALITY BAR
+
+Do not stop at "it works."
+
+The final result should satisfy:
+
+TECHNICAL CORRECTNESS
+★★★★★
+
+VISUAL DESIGN
+★★★★★
+
+ORIGINALITY
+★★★★★
+
+RESPONSIVENESS
+★★★★★
+
+INTERACTIVITY
+★★★★★
+
+CODE QUALITY
+★★★★★
+
+EDUCATIONAL VALUE
+★★★★★
+
+EVALUATOR IMPACT
+★★★★★
+
+The final website should look like a **small, thoughtfully designed Web3 product**, not an assignment template.
+
+Begin with STAGE 0.
+
+Do not implement everything at once.
