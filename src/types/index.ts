@@ -26,7 +26,7 @@ export interface MarketDataState {
   lastUpdated: Date | null;
 }
 
-/** Block Simulator */
+/** Dynamic Blockchain Simulator */
 export interface Block {
   id: number;
   data: string;
@@ -36,11 +36,23 @@ export interface Block {
   isMined: boolean;
   isMining: boolean;
   isValid: boolean;
+  miningAttempts?: number;
+  miningDurationMs?: number;
 }
 
 export interface MiningLog {
   nonce: number;
   hash: string;
+}
+
+export interface ChainAnalyticsData {
+  totalBlocks: number;
+  minedBlocks: number;
+  validBlocks: number;
+  invalidBlocks: number;
+  totalAttempts: number;
+  avgNonce: number;
+  avgDurationMs: number;
 }
 
 /** Concept comparison card */

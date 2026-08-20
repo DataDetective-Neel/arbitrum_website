@@ -38,12 +38,13 @@ The application is structured into four cohesive investigation modules:
 - **Network Resiliency**: Graceful handling of loading skeletons, API rate limits, error fallbacks with retry actions, and stale-data caching during network interruptions.
 - **Audit Timestamp**: Live timestamp displaying the exact time of the last successful API handshake.
 
-### Case 04: Block Simulator (`/simulator`)
+### Case 04: Dynamic Block Simulator & Chain Analytics (`/simulator`)
+- **Dynamic Multi-Block Chain**: Extendable chain ($N \ge 1$) supporting dynamic block addition (`+ ADD BLOCK`), logical block deletion, and Genesis block protection.
 - **Mathematical SHA-256 Mining**: Zero external blockchain dependencies—uses the native W3C Web Crypto API (`crypto.subtle.digest`).
-- **Proof of Work Simulation**: Iterative nonce incrementation against a dynamic difficulty target (`00` prefix).
-- **Cryptographic Chain Dependency**: Block 02 strictly stores Block 01's valid hash as its immutable `previousHash`.
-- **Real-Time Tamper Invalidation**: Editing Block 01's payload instantly invalidates its hash, breaking the cryptographic link and triggering an immediate `CHAIN INTEGRITY: COMPROMISED` alert.
-- **Chain Restoration**: Demonstrates why historical tampering requires re-mining every subsequent block sequentially.
+- **Sequential Chain Mining**: One-click `MINE CHAIN` action that iterates through and mines the entire blockchain in cryptographic order with live progress feedback.
+- **Cascading Downstream Tamper Invalidation**: Editing any historical block (e.g. Block 01 or Block 02) immediately invalidates its hash, cascades through all downstream `previousHash` links, and triggers an immediate `CHAIN INTEGRITY: COMPROMISED` alert.
+- **Interactive Chain Analytics**: Native SVG-powered telemetry dashboards including Nonce Distribution, SHA-256 Iteration workload comparisons, and interactive inspection tooltips.
+- **Sequential Restoration**: Demonstrates why rewriting ledger history requires re-mining every subsequent block sequentially.
 
 ---
 
@@ -90,7 +91,10 @@ Arbitrum_Website/
     │   ├── Home/                   # Case 01: Arbitrum & L2 Landing
     │   ├── Concepts/               # Case 02: Web3 Concept Modules
     │   ├── LivePrices/             # Case 03: Live Market Intelligence
-    │   └── BlockSimulator/         # Case 04: SHA-256 Block Mining Simulator
+    │   └── BlockSimulator/         # Case 04: Dynamic Blockchain & Analytics
+    │       ├── BlockSimulator.tsx  # Dynamic multi-block orchestrator
+    │       ├── BlockCard.tsx       # Individual block component & mining terminal
+    │       └── ChainAnalytics.tsx  # Native SVG analytics & HUD metrics
     ├── services/
     │   └── coingecko.ts            # Isolated API client for CoinGecko endpoints
     ├── styles/

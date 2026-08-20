@@ -30,7 +30,7 @@ export async function computeBlockHash(
 
 /**
  * Difficulty prefix — the hash must start with this many zeros.
- * Using "00" (2 zeros) for a quick but non-trivial mining experience.
+ * Using "00" (2 zeros) for a fast, responsive, but cryptographically real proof of work.
  */
 export const DIFFICULTY_PREFIX = '00';
 
@@ -44,6 +44,8 @@ export function isValidHash(hash: string): boolean {
 export interface MineResult {
   nonce: number;
   hash: string;
+  attempts: number;
+  durationMs: number;
 }
 
 export interface MineProgressCallback {
@@ -54,36 +56,36 @@ export interface MineProgressCallback {
  * Mine a block by incrementing the nonce until the hash starts with
  * the required difficulty prefix.
  *
- * The actual hashing is real SHA-256. The progress callback is
- * throttled to avoid overwhelming React state updates.
+ * Real SHA-256 computation with throttled UI progress reporting.
  *
  * @param data - The block data string
  * @param previousHash - The previous block's hash
  * @param startNonce - The nonce to start mining from
  * @param onProgress - Callback invoked periodically with current nonce/hash
  * @param signal - AbortSignal to cancel mining
- * @returns The successful nonce and hash
+ * @returns The successful nonce, hash, total attempts, and duration in ms
  */
 export async function mineBlock(
   data: string,
   previousHash: string,
-  startNonce: number,
+  startNonce = 0,
   onProgress?: MineProgressCallback,
   signal?: AbortSignal
 ): Promise<MineResult> {
+  const startTime = performance.now();
   let nonce = startNonce;
+  let attempts = 0;
   let lastProgressTime = 0;
-  const PROGRESS_INTERVAL_MS = 50; // Throttle UI updates to ~20fps
+  const PROGRESS_INTERVAL_MS = 40; // Throttle UI updates to ~25fps
 
   while (true) {
-    // Check for cancellation
     if (signal?.aborted) {
       throw new DOMException('Mining aborted', 'AbortError');
     }
 
+    attempts++;
     const hash = await computeBlockHash(data, previousHash, nonce);
 
-    // Throttled progress reporting
     const now = Date.now();
     if (onProgress && now - lastProgressTime >= PROGRESS_INTERVAL_MS) {
       onProgress(nonce, hash);
@@ -93,9 +95,9 @@ export async function mineBlock(
     }
 
     if (isValidHash(hash)) {
-      // Report the final successful result
       onProgress?.(nonce, hash);
-      return { nonce, hash };
+      const durationMs = Math.max(1, Math.round(performance.now() - startTime));
+      return { nonce, hash, attempts, durationMs };
     }
 
     nonce++;
