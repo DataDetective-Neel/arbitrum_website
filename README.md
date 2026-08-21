@@ -434,7 +434,8 @@ A complete audit against the Arbitrum Builder Labs assignment criteria:
 
 ## 👤 11. Attribution & Author
 
-- **Developer**: Neel
+- **Developer**: Indraneel Chatterjee
+- **Website Link**: [https://arbitrum-website-three.vercel.app/prices](https://arbitrum-website-three.vercel.app/prices)
 - **GitHub Repository**: [https://github.com/DataDetective-Neel/arbitrum_website](https://github.com/DataDetective-Neel/arbitrum_website)
 - **Program**: Arbitrum Builder Labs
 - **License**: MIT License
