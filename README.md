@@ -108,16 +108,22 @@ The project is structured into four primary investigation cases unified under a 
 
 ---
 
-### Case 03: Live Market Intelligence (`/prices`)
+### Case 03: Live Market Intelligence & Historical Charts (`/prices`)
 
-*Real-time spot price telemetry from public cryptocurrency infrastructure.*
+*Real-time spot price telemetry and interactive multi-timeframe valuation curves from public cryptocurrency infrastructure.*
 
 - **CoinGecko Public API Integration**: Live REST v3 queries fetching real-time spot rates and 24-hour percentage deltas for Bitcoin (`BTC`), Ethereum (`ETH`), and Arbitrum (`ARB`).
+- **Interactive Multi-Timeframe Valuation Chart**:
+  - **Selectable Timeframes**: `1W` (7 days), `1M` (30 days), `3M` (90 days), `6M` (180 days), and `1Y` (365 days).
+  - **Multi-Asset Tabs**: Switch between BTC, ETH, and ARB by clicking the tabs or the top live price cards.
+  - **Interactive Cursor Scrubbing**: Move the mouse / touch across the graph to inspect exact **historical spot price** and **date/timestamp** via an interactive floating HUD and vertical dashed crosshair.
+  - **Period Summary Telemetry**: Displays Period High, Low, Period Open, and total return delta (+$ / -% with green/red badges).
+  - **Native SVG Visualization**: Smooth responsive vector curve with gradient area fill under the trajectory.
 - **Telemetry UI**:
   - Dominant price typography with directional status badges (green for positive gains, red for pullbacks).
   - Shimmer loading skeletons during network initialization.
   - Error fallback states with one-click retry actions.
-  - Stale-data cache banner with warning badges if rate limits are encountered.
+  - In-memory caching to avoid rate limits when switching between assets or timeframes.
   - Live audit timestamp displaying the exact time of the last verified API handshake.
   - Working **Refresh Market Feed** button with active spinning feedback.
 
@@ -229,9 +235,11 @@ Arbitrum_Website/
     │   ├── Concepts/               # Case 02: Web3 Concept Comparison Modules
     │   │   ├── Concepts.tsx
     │   │   └── Concepts.module.css
-    │   ├── LivePrices/             # Case 03: Live Market Intelligence
-    │   │   ├── LivePrices.tsx
-    │   │   └── LivePrices.module.css
+    │   ├── LivePrices/             # Case 03: Live Market Intelligence & Charts
+    │   │   ├── LivePrices.tsx      # Market feed view & asset selector
+    │   │   ├── LivePrices.module.css
+    │   │   ├── PriceChart.tsx      # Interactive 1W/1M/3M/6M/1Y historical chart
+    │   │   └── PriceChart.module.css
     │   └── BlockSimulator/         # Case 04: Dynamic Blockchain & Analytics
     │       ├── BlockSimulator.tsx  # Dynamic multi-block orchestrator
     │       ├── BlockSimulator.module.css

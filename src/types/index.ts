@@ -26,6 +26,28 @@ export interface MarketDataState {
   lastUpdated: Date | null;
 }
 
+/** Historical Price Chart */
+export type TimeframeKey = '1W' | '1M' | '3M' | '6M' | '1Y';
+
+export interface TimeframeConfig {
+  key: TimeframeKey;
+  label: string;
+  days: number;
+}
+
+export interface HistoricalPricePoint {
+  timestamp: number;
+  price: number;
+}
+
+export interface MarketChartState {
+  points: HistoricalPricePoint[];
+  loading: boolean;
+  error: string | null;
+  selectedCoinId: string;
+  selectedTimeframe: TimeframeKey;
+}
+
 /** Dynamic Blockchain Simulator */
 export interface Block {
   id: number;

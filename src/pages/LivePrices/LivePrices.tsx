@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   RefreshCw,
   TrendingUp,
@@ -6,17 +6,39 @@ import {
   AlertCircle,
   Activity,
   CheckCircle2,
+  LineChart as LineChartIcon,
 } from 'lucide-react';
 import { useMarketData } from '../../hooks/useMarketData';
 import { formatPrice, formatPercent, formatTime } from '../../utils/formatters';
 import type { CoinPriceData } from '../../types';
+import PriceChart from './PriceChart';
 import styles from './LivePrices.module.css';
 
-function PriceCard({ coin }: { coin: CoinPriceData }) {
+function PriceCard({
+  coin,
+  isSelected,
+  onSelect,
+}: {
+  coin: CoinPriceData;
+  isSelected: boolean;
+  onSelect: () => void;
+}) {
   const isPositive = coin.change24h >= 0;
 
   return (
-    <article className={styles.priceCard}>
+    <article
+      onClick={onSelect}
+      className={`${styles.priceCard} ${isSelected ? styles.selectedCard : ''}`}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
+      aria-label={`Select ${coin.name} to view historical chart. Current price ${formatPrice(coin.price)}`}
+    >
       <div className={styles.cardTop}>
         <div className={styles.coinInfo}>
           <span className={styles.coinSymbol}>{coin.symbol}</span>
@@ -39,9 +61,9 @@ function PriceCard({ coin }: { coin: CoinPriceData }) {
       <p className={styles.priceValue}>{formatPrice(coin.price)}</p>
       <div className={styles.priceFooter}>
         <span className={styles.priceLabel}>USD · 24H DELTA</span>
-        <span className={styles.feedStatus}>
-          <span className={styles.feedStatusDot} aria-hidden="true" />
-          LIVE
+        <span className={styles.inspectHint}>
+          <LineChartIcon size={11} aria-hidden="true" />
+          {isSelected ? 'ACTIVE CHART' : 'INSPECT CHART'}
         </span>
       </div>
     </article>
@@ -87,6 +109,7 @@ function ErrorState({
 
 export default function LivePrices() {
   const { data, loading, error, lastUpdated, fetchData } = useMarketData();
+  const [selectedCoinId, setSelectedCoinId] = useState<string>('bitcoin');
 
   useEffect(() => {
     fetchData();
@@ -107,8 +130,8 @@ export default function LivePrices() {
             </div>
           </div>
           <p className={styles.headerDescription}>
-            Real-time spot price metrics for benchmark Layer 1 and Layer 2 assets.
-            Observe live market valuation differences across the Ethereum and Arbitrum ecosystems.
+            Real-time spot price metrics and interactive historical market charts for benchmark Layer 1 and Layer 2 assets.
+            Select any asset below to view 1-week to 1-year valuation trends.
           </p>
         </header>
 
@@ -120,12 +143,18 @@ export default function LivePrices() {
           <ErrorState message={error} onRetry={fetchData} />
         )}
 
-        {/* Data */}
+        {/* Live Data and Chart */}
         {hasData && (
           <>
+            {/* Price Cards Grid */}
             <div className={styles.priceGrid}>
               {data.map(coin => (
-                <PriceCard key={coin.id} coin={coin} />
+                <PriceCard
+                  key={coin.id}
+                  coin={coin}
+                  isSelected={selectedCoinId === coin.id}
+                  onSelect={() => setSelectedCoinId(coin.id)}
+                />
               ))}
             </div>
 
@@ -171,6 +200,12 @@ export default function LivePrices() {
                 ⚠ {error} — Serving previously verified market cache.
               </div>
             )}
+
+            {/* Interactive Historical Price Chart (1W, 1M, 3M, 6M, 1Y) */}
+            <PriceChart
+              currentPrices={data}
+              initialCoinId={selectedCoinId}
+            />
           </>
         )}
 
@@ -179,7 +214,7 @@ export default function LivePrices() {
           <span>·</span>
           <span>USD Denominated Spot Rates</span>
           <span>·</span>
-          <span>Educational Infrastructure Research</span>
+          <span>Interactive Historical Timeframes: 1W · 1M · 3M · 6M · 1Y</span>
         </div>
       </div>
     </main>
